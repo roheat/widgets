@@ -151,7 +151,7 @@ export function ConnectWalletDialog() {
           logoSrc={METAMASK_ICON_URL}
           onClick={() => onActivate(connectors.metaMask)}
         />
-        Added Gnosis Safe
+        <Header title={<Trans>Gnosis Safe Added</Trans>} />
         <MetaMaskButton
           walletName="Gnosis Safe"
           logoSrc={METAMASK_ICON_URL}
