@@ -2,6 +2,7 @@ import { useWeb3React } from '@web3-react/core'
 import { EIP1193 } from '@web3-react/eip1193'
 import { MetaMask } from '@web3-react/metamask'
 import { Network } from '@web3-react/network'
+import { GnosisSafe } from '@web3-react/gnosis-safe'
 import { WalletConnect } from '@web3-react/walletconnect-v2'
 import { createContext, PropsWithChildren, useContext, useEffect } from 'react'
 import invariant from 'tiny-invariant'
@@ -14,6 +15,7 @@ export interface Connectors {
   walletConnect: WalletConnect
   walletConnectQR: WalletConnectQR
   network: Network
+  gnosisSafe: GnosisSafe
 }
 
 const ConnectorsContext = createContext<Connectors | null>(null)

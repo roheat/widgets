@@ -5,6 +5,7 @@ import { initializeConnector, Web3ReactHooks, Web3ReactProvider } from '@web3-re
 import { EIP1193 } from '@web3-react/eip1193'
 import { MetaMask } from '@web3-react/metamask'
 import { Network } from '@web3-react/network'
+import { GnosisSafe } from '@web3-react/gnosis-safe'
 import { Connector, Provider as Eip1193Provider } from '@web3-react/types'
 import { WalletConnect } from '@web3-react/walletconnect-v2'
 import { useAsyncError } from 'components/Error/ErrorBoundary'
@@ -34,6 +35,7 @@ interface Web3ReactConnectors {
   walletConnect: Web3ReactConnector<WalletConnect>
   walletConnectQR: Web3ReactConnector<WalletConnectQR>
   network: Web3ReactConnector<Network>
+  gnosisSafe: Web3ReactConnector<GnosisSafe>
 }
 
 export interface ProviderProps {
@@ -82,6 +84,7 @@ export function Provider({
 
     const prioritizedConnectors: (Web3ReactConnector | null | undefined)[] = [
       web3ReactConnectors.user,
+      web3ReactConnectors.gnosisSafe,
       web3ReactConnectors.metaMask,
       web3ReactConnectors.walletConnect,
       web3ReactConnectors.walletConnectQR,
@@ -97,6 +100,7 @@ export function Provider({
       walletConnect: web3ReactConnectors.walletConnect[0],
       walletConnectQR: web3ReactConnectors.walletConnectQR[0],
       network: web3ReactConnectors.network[0],
+      gnosisSafe: web3ReactConnectors.gnosisSafe[0],
     }),
     [web3ReactConnectors]
   )
@@ -108,7 +112,7 @@ export function Provider({
       connectors.user.activate().catch(() => undefined)
       return
     } else if (shouldEagerlyConnect) {
-      const eagerConnectors = [connectors.metaMask, connectors.walletConnect]
+      const eagerConnectors = [connectors.metaMask, connectors.walletConnect, connectors.gnosisSafe]
       eagerConnectors.forEach((connector) => connector.connectEagerly().catch(() => undefined))
     }
     connectors.network.activate().catch(() => undefined)
@@ -217,14 +221,23 @@ function useWeb3ReactConnectors({ defaultChainId, provider, jsonRpcUrlMap }: Pro
     [connectionMap, defaultChainId]
   )
 
+  const gnosisSafe = useMemo(
+    () =>
+      initializeWeb3ReactConnector(GnosisSafe, {
+        options: {},
+      }),
+    []
+  )
+
   return useMemo<Web3ReactConnectors>(
     () => ({
       user,
       metaMask,
       walletConnect,
+      gnosisSafe,
       walletConnectQR,
       network,
     }),
-    [metaMask, network, user, walletConnect, walletConnectQR]
+    [metaMask, network, user, walletConnect, walletConnectQR, gnosisSafe]
   )
 }
