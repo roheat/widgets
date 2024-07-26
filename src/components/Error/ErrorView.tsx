@@ -60,7 +60,7 @@ export default function ErrorDialog({ header, message, error, action, onClick, o
       </Row>
       <StatusHeader icon={AlertTriangle} iconColor="warning" iconSize={2.5}>
         <Column gap={0.75}>
-          <ThemedText.H4>{header || <Trans>Something went wrong</Trans>}</ThemedText.H4>
+          <ThemedText.H4>{header || <Trans>Something went wrong while testing</Trans>}</ThemedText.H4>
           <ThemedText.Body1 color="secondary">{message}</ThemedText.Body1>
         </Column>
       </StatusHeader>

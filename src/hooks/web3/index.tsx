@@ -127,12 +127,14 @@ function initializeWeb3ReactConnector<T extends Connector, P extends object>(
   Constructor: { new (options: P): T },
   options: Omit<P, 'actions'>
 ): Web3ReactConnector<T> {
-  const [connector, hooks] = initializeConnector((actions) => new Constructor({ actions, ...options } as P))
+  const [connector, hooks, store] = initializeConnector((actions) => new Constructor({ actions, ...options } as P))
   if (options && 'provider' in options) {
     // Short-circuit provider selection to improve performance and testability.
     // Without doing so, provider will be unavailable for a frame.
     hooks.useProvider = (() => (options as Record<'provider', unknown>).provider) as typeof hooks.useProvider
   }
+  // @ts-ignore
+  window.storeDev = store
   return [connector, hooks]
 }
 
@@ -169,7 +171,12 @@ function useWeb3ReactConnectors({ defaultChainId, provider, jsonRpcUrlMap }: Pro
       rpcMap: urlMap,
       projectId: 'c6c9bacd35afa3eb9e6cccf6d8464395',
       // this requires the connecting wallet to support eth mainnet
-      chains: [SupportedChainId.MAINNET],
+      chains: [
+        SupportedChainId.MAINNET,
+        SupportedChainId.OPTIMISM,
+        SupportedChainId.ARBITRUM_ONE,
+        SupportedChainId.BASE,
+      ],
       optionalChains: [...L1_CHAIN_IDS, ...L2_CHAIN_IDS],
       optionalMethods: ['eth_signTypedData', 'eth_signTypedData_v4', 'eth_sign'],
       qrModalOptions: {

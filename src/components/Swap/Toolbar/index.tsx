@@ -6,7 +6,7 @@ import Expando from 'components/Expando'
 import { ChainError, useIsAmountPopulated, useSwapInfo } from 'hooks/swap'
 import { useIsWrap } from 'hooks/swap/useWrapCallback'
 import { AlertTriangle } from 'icons'
-import { memo, ReactNode, useCallback, useContext, useMemo } from 'react'
+import { ComponentType, memo, ReactNode, useCallback, useContext, useMemo } from 'react'
 import { TradeState } from 'state/routing/types'
 import { Field } from 'state/swap'
 import styled from 'styled-components/macro'
@@ -18,6 +18,7 @@ import * as Caption from './Caption'
 import { Context as ToolbarContext, Provider as ToolbarContextProvider } from './ToolbarContext'
 import ToolbarOrderRouting from './ToolbarOrderRouting'
 import ToolbarTradeSummary, { SummaryRowProps } from './ToolbarTradeSummary'
+import { useWeb3React } from '@web3-react/core'
 
 const StyledExpando = styled(Expando)`
   border: 1px solid ${({ theme }) => theme.outline};
@@ -35,6 +36,11 @@ const ToolbarRow = styled(Row)<{ isExpandable?: true }>`
   padding: 0 1rem;
 `
 
+interface Props {
+  isWalletConnectedOverride?: boolean
+  PreCaptionRowComponent?: ComponentType<{ swapInfo?: ReturnType<typeof useSwapInfo> }>
+}
+
 function CaptionRow() {
   const {
     [Field.INPUT]: { currency: inputCurrency },
@@ -44,6 +50,7 @@ function CaptionRow() {
     impact,
     slippage,
   } = useSwapInfo()
+
   const isAmountPopulated = useIsAmountPopulated()
   const isWrap = useIsWrap()
   const { open, onToggleOpen } = useContext(ToolbarContext)
@@ -183,19 +190,21 @@ function CaptionRow() {
   )
 }
 
-function ToolbarActionButton() {
+function ToolbarActionButton({ isWalletConnectedOverride }: Props) {
   const {
     [Field.INPUT]: { currency: inputCurrency, balance: inputBalance, amount: inputAmount },
     [Field.OUTPUT]: { currency: outputCurrency },
     trade: { trade, state },
   } = useSwapInfo()
   const isAmountPopulated = useIsAmountPopulated()
+  const { account, isActive } = useWeb3React()
+  const isWalletConnected = !!account && isActive
 
   const insufficientBalance: boolean | undefined = useMemo(() => {
     return inputBalance && inputAmount && inputBalance.lessThan(inputAmount)
   }, [inputAmount, inputBalance])
 
-  if (insufficientBalance) {
+  if (isWalletConnected && insufficientBalance) {
     return (
       <ActionButton disabled>
         <Trans>Insufficient {inputCurrency?.symbol} balance</Trans>
@@ -203,29 +212,36 @@ function ToolbarActionButton() {
     )
   }
   const hasValidInputs = inputCurrency && outputCurrency && isAmountPopulated
-  if (hasValidInputs && (state === TradeState.NO_ROUTE_FOUND || (trade && !trade.swaps))) {
+  if (isWalletConnected && hasValidInputs && (state === TradeState.NO_ROUTE_FOUND || (trade && !trade.swaps))) {
     return (
       <ActionButton disabled>
         <Trans>Insufficient liquidity</Trans>
       </ActionButton>
     )
   }
-  return <SwapActionButton />
+  return <SwapActionButton isWalletConnectedOverride={isWalletConnectedOverride} />
 }
 
-function Toolbar() {
+function PreCaptionRowComponentWrapper({ Component }: { Component: NonNullable<Props['PreCaptionRowComponent']> }) {
+  const swapInfo = useSwapInfo()
+
+  return <Component swapInfo={swapInfo} />
+}
+
+function Toolbar(props: Props) {
   return (
     <>
+      {props.PreCaptionRowComponent && <PreCaptionRowComponentWrapper Component={props.PreCaptionRowComponent} />}
       <CaptionRow />
-      <ToolbarActionButton />
+      <ToolbarActionButton {...props} />
     </>
   )
 }
 
-export default memo(function WrappedToolbar() {
+export default memo(function WrappedToolbar(props: Props) {
   return (
     <ToolbarContextProvider>
-      <Toolbar />
+      <Toolbar {...props} />
     </ToolbarContextProvider>
   )
 })
