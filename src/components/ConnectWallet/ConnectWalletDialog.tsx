@@ -138,7 +138,7 @@ export function ConnectWalletDialog() {
 
   return (
     <>
-      <Header title={<Trans>Connect wallet</Trans>} />
+      <Header title={<Trans>Connect wallet zz</Trans>} />
       <Body align="stretch" padded>
         <WalletConnectButton
           walletName="WalletConnect"
