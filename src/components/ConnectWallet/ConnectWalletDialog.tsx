@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/macro'
 import { Connector } from '@web3-react/types'
 import METAMASK_ICON_URL from 'assets/images/metamaskIcon.png'
+import COINSHIFT_ICON_URL from 'assets/images/metamaskIcon.svg'
 import WALLETCONNECT_ICON_URL from 'assets/images/walletConnectIcon.svg'
 import Button from 'components/Button'
 import Column from 'components/Column'
@@ -138,7 +139,7 @@ export function ConnectWalletDialog() {
 
   return (
     <>
-      <Header title={<Trans>Connect wallet zz</Trans>} />
+      <Header title={<Trans>Connect wallet</Trans>} />
       <Body align="stretch" padded>
         <WalletConnectButton
           walletName="WalletConnect"
@@ -151,10 +152,9 @@ export function ConnectWalletDialog() {
           logoSrc={METAMASK_ICON_URL}
           onClick={() => onActivate(connectors.metaMask)}
         />
-        <Header title={<Trans>Gnosis Safe Added</Trans>} />
         <MetaMaskButton
           walletName="Gnosis Safe"
-          logoSrc={METAMASK_ICON_URL}
+          logoSrc={COINSHIFT_ICON_URL}
           onClick={() => onActivate(connectors.gnosisSafe)}
         />
         <NoWalletButton />
