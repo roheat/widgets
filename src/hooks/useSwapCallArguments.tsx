@@ -35,8 +35,11 @@ export function useSwapCallArguments(
 ): SwapCall[] {
   const { account, chainId, provider } = useWeb3React()
 
-  const { address: recipientAddress } = useENS(recipientAddressOrName)
-  const recipient = recipientAddressOrName === null ? account : recipientAddress
+  console.log({ account, chainId, provider })
+
+  // const { address: recipientAddress } = useENS(recipientAddressOrName)
+  // const recipient = recipientAddressOrName === null ? account : recipientAddress
+  const recipient = account
   const argentWalletContract = useArgentWalletContract()
 
   return useMemo(() => {
