@@ -9,7 +9,6 @@ import { InterfaceTrade } from 'state/routing/types'
 import approveAmountCalldata from 'utils/approveAmountCalldata'
 
 import { useArgentWalletContract } from './useArgentWalletContract'
-import useENS from './useENS'
 import { SignatureData } from './usePermit'
 
 interface SwapCall {
@@ -34,8 +33,6 @@ export function useSwapCallArguments(
   feeOptions: FeeOptions | undefined
 ): SwapCall[] {
   const { account, chainId, provider } = useWeb3React()
-
-  console.log({ account, chainId, provider })
 
   // const { address: recipientAddress } = useENS(recipientAddressOrName)
   // const recipient = recipientAddressOrName === null ? account : recipientAddress

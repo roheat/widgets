@@ -3,7 +3,7 @@ import { Trans } from '@lingui/macro'
 import { Percent } from '@uniswap/sdk-core'
 import { FeeOptions } from '@uniswap/v3-sdk'
 import { useWeb3React } from '@web3-react/core'
-import useENS from 'hooks/useENS'
+// import useENS from 'hooks/useENS'
 import { SignatureData } from 'hooks/usePermit'
 import { useSwapCallArguments } from 'hooks/useSwapCallArguments'
 import { ReactNode, useMemo } from 'react'
@@ -54,8 +54,8 @@ export function useSwapCallback({
   )
   const { callback } = useSendSwapTransaction(account, chainId, provider, trade, swapCalls)
 
-  const { address: recipientAddress } = useENS(recipientAddressOrName)
-  const recipient = recipientAddressOrName === null ? account : recipientAddress
+  // const { address: recipientAddress } = useENS(recipientAddressOrName)
+  const recipient = account
 
   return useMemo(() => {
     if (!trade || !provider || !account || !chainId || !callback) {
